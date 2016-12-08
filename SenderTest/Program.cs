@@ -14,28 +14,34 @@ namespace SenderTest
         static void Main(string[] args)
         {
 
-            using (var bus = RabbitHutch.CreateBus("amqp://hbfbcxxk:dA9pZPfa0hQZk8GVT54O5O-KmpIeFTXm@hyena.rmq.cloudamqp.com/hbfbcxxk"))
+            using (var bus = RabbitHutch.CreateBus("amqp://olnoebsz:RWYkFj0Ynx36b6MwmBmtn24wzaptjhYL@hyena.rmq.cloudamqp.com/olnoebsz"))
             {
+                bool isFinished = false;
 
-                while (true)
+                while (isFinished==false)
                 {
-                    for (int i = 0; i < 10; i++)
+
+                    Console.WriteLine("Type a message to publish or quit to exit:");
+                    var input = Console.ReadLine();
+
+                    if (input == "quit")
                     {
-                        var message = new MessageTest(
-                            string.Format("Message {0} is {1}", i, Guid.NewGuid().ToString()));
-                        Console.WriteLine(message.message);
-                        bus.SendAsync<MessageTest>("my.queue", message);
+                        isFinished = true;
+                    }
+                    else
+                    {
+                        var message = new MessageTest(input);
+
+                        Console.WriteLine("Please enter a topic:");
+                        var topic = Console.ReadLine();
+
+                        //bus.SendAsync<MessageTest>("my.queue", message);
+                        bus.Publish(message, topic);
                         //Thread.Sleep(1000);
                     }
-                    
+                }
 
-                    if (Console.ReadLine().ToLower().Contains("q") == true)
-                    {
-                        break;
-                    }
-                }               
 
-                
             }
         }
     }
